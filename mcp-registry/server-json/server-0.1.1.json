@@ -1,0 +1,176 @@
+{
+  "name": "com.redhat/rhoai-mcp-server",
+  "version": "0.1.1",
+  "title": "Red Hat OpenShift AI MCP Server",
+  "description": "MCP server for Red Hat OpenShift AI (RHOAI). Enables AI agents to manage Data Science Projects, Jupyter workbenches, model serving (KServe InferenceServices), Data Science Pipelines, S3 data connections, persistent storage, model training (Kubeflow Training Operator), and Model Registry. Integrates with llm-d Planner for LLM deployment recommendation and config generation. Includes cluster exploration composites and 18 workflow prompts for multi-step operations. Tools listed below reflect the default configuration with read-only mode disabled.",
+  "packages": [
+    {
+      "registryType": "oci",
+      "identifier": "registry.redhat.io/rhoai/odh-rhoai-mcp-rhel9:rhoai-3.6-ea.2",
+      "transport": {
+        "type": "streamable-http",
+        "url": "http://localhost:8000/mcp"
+      },
+      "environmentVariables": [
+        {
+          "name": "MODEL_CATALOG_CA_BUNDLE",
+          "description": "Path to the CA certificate bundle for verifying the Model Catalog TLS certificate. Must match the mountPath of the service-ca ConfigMap (default: /etc/pki/service-ca/service-ca.crt).",
+          "isRequired": true
+        }
+      ],
+      "packageArguments": [
+        {
+          "name": "--transport",
+          "type": "named",
+          "value": "streamable-http"
+        }
+      ],
+      "runtimeHint": "docker"
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/opendatahub-io/rhoai-mcp",
+    "source": "github"
+  },
+  "websiteUrl": "https://github.com/opendatahub-io/rhoai-mcp",
+  "_meta": {
+    "com.redhat/deploy-spec": {
+      "config": {
+        "arguments": [
+          "--transport",
+          "streamable-http"
+        ],
+        "env": [
+          {
+            "name": "MODEL_CATALOG_CA_BUNDLE",
+            "value": "<MODEL_CATALOG_CA_BUNDLE>"
+          },
+          {
+            "name": "RHOAI_MCP_TRANSPORT",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_TRANSPORT",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          },
+          {
+            "name": "RHOAI_MCP_HOST",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_HOST",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          },
+          {
+            "name": "RHOAI_MCP_PORT",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_PORT",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          },
+          {
+            "name": "RHOAI_MCP_AUTH_MODE",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_AUTH_MODE",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          },
+          {
+            "name": "RHOAI_MCP_LOG_LEVEL",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_LOG_LEVEL",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          },
+          {
+            "name": "RHOAI_MCP_READ_ONLY_MODE",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_READ_ONLY_MODE",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          },
+          {
+            "name": "RHOAI_MCP_ENABLE_DANGEROUS_OPERATIONS",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_ENABLE_DANGEROUS_OPERATIONS",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          },
+          {
+            "name": "RHOAI_MCP_OIDC_ENABLED",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_OIDC_ENABLED",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          },
+          {
+            "name": "RHOAI_MCP_OIDC_TOKEN_MODE",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_OIDC_TOKEN_MODE",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          },
+          {
+            "name": "RHOAI_MCP_OIDC_KUBE_AUTH_STRATEGY",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_OIDC_KUBE_AUTH_STRATEGY",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          },
+          {
+            "name": "RHOAI_MCP_PLANNER_MODEL_CATALOG_URL",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "key": "RHOAI_MCP_PLANNER_MODEL_CATALOG_URL",
+                "name": "rhoai-mcp-config"
+              }
+            }
+          }
+        ],
+        "path": "/mcp",
+        "port": 8000,
+        "storage": [
+          {
+            "path": "/etc/pki/service-ca",
+            "source": {
+              "configMap": {
+                "name": "rhoai-mcp-service-ca"
+              },
+              "type": "ConfigMap"
+            }
+          }
+        ]
+      },
+      "runtime": {
+        "security": {
+          "serviceAccountName": "rhoai-mcp"
+        }
+      },
+      "source": {
+        "containerImage": {
+          "ref": "registry.redhat.io/rhoai/odh-rhoai-mcp-rhel9:rhoai-3.6-ea.2"
+        },
+        "type": "ContainerImage"
+      }
+    }
+  },
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json"
+}
